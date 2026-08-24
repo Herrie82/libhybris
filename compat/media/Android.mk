@@ -41,9 +41,17 @@ else
 LOCAL_SHARED_LIBRARIES += \
 	libcameraservice \
 	libcamera_client \
-	libmedialogservice \
 	libmedia \
 	libmediaplayerservice
+
+# libmedialogservice was removed in Android 16 - frameworks/av/services/medialog
+# is gone - and camera_service fails to link against a module with no rule to
+# build it. Link it only where it exists, the same way this file already probes
+# the tree for mediaserver and libmediaplayerservice above, rather than adding
+# another version gate that the next release will fall through in turn.
+ifneq (,$(wildcard frameworks/av/services/medialog))
+LOCAL_SHARED_LIBRARIES += libmedialogservice
+endif
 endif
 
 LOCAL_C_INCLUDES := \
